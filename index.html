@@ -4947,7 +4947,7 @@ V3D.retman.colors={'AB':0x2b2d30,'EX':0x121212,'V':0x2b2d30,'1':0xa7ae98,'2':0x1
 V3D.retman.extra=function(P,K,bb){var L=Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z)*.14;window.flechaFR(P,K,Math.min(L,1.45),[-2.8,-.86,-.3],false,-Math.PI/2,0,Math.PI/2);};
 // ---------- LÍNEAS DE ENFRIAMIENTO DE FRENOS TRASEROS (bridas 1P-4584) · 162-2634 vista superior y lateral trasera, sobre el chasis ----------
 V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
-  PY=HQ.paint(T,0xc98000),PG=(function(){var m=HQ.paint(T,0xc98000);m.transparent=true;m.opacity=.55;m.depthWrite=false;return m;})(),CG=HQ.cast(T,0x5d6166),
+  PY=HQ.paint(T,0xc98000),PG=(function(){var m=HQ.paint(T,0xc98000);return m;})(),CG=HQ.cast(T,0x5d6166),
   TU=new T.MeshStandardMaterial({color:new T.Color(0x2b2e31).convertSRGBToLinear(),metalness:.55,roughness:.38,envMapIntensity:1}),
   OR=new T.MeshStandardMaterial({color:new T.Color(0x111111).convertSRGBToLinear(),roughness:.85}),
   RD=new T.MeshStandardMaterial({color:new T.Color(0xb3241b).convertSRGBToLinear(),roughness:.6,metalness:.1});
@@ -4987,7 +4987,7 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
   var taf=HQ.rblock(T,1.1,1.0,6.0,.1,PG);taf.position.set(10.6,2.75,0);bas.add(taf);
   var tdel=HQ.rblock(T,.9,1.2,6.0,.1,PG);tdel.position.set(12.6,3.2,0);bas.add(tdel);
   
-  bas.traverse(function(o){if(o.isMesh)o.raycast=function(){};});P('BAS',[0,0,0],bas);
+  P('BAS',[0,0,0],bas);
   // caja del eje trasero: banjo central con el carrier hacia adelante, tubos a cada lado
   var eje=grp(),bw=M(new T.SphereGeometry(1.75,48,32),PY);bw.scale.set(1,1,.8);eje.add(bw);
   var car=M(new T.CylinderGeometry(1.15,1.45,1.5,40),PY);car.rotation.z=-Math.PI/2;car.position.x=1.9;eje.add(car);
@@ -5044,12 +5044,12 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
       [-1,1].forEach(function(s2,j){var bo=HQ.hexBolt(T,.6,.05,ZN);bo.rotation.x=S>0?-Math.PI/2:Math.PI/2;bo.position.set(e[1][0]+s2*.16,e[1][1]-s2*.16,S*5.25);P(56,[0,1.5,S*2],bo).userData.nb=!(sh&&i===0&&j===0);});});
     P('T57',[0,2.2,S*1.4],tubo([[pK[0]-.1,pK[1]+.05,S*5.0],[pK[0]-.4,pK[1]+.55,S*4.75],[0,pK[1]+.95,S*4.7],[pM[0]+.4,pM[1]+.55,S*4.75],[pM[0]+.1,pM[1]+.05,S*5.0]],.12)).userData.nb=!sh;
     P(S>0?'T54':'T61',[0,2.2,S*1.6],tubo([[pL[0]-.1,pL[1]-.05,S*5.0],[pL[0]-.4,pL[1]-.55,S*4.75],[0,pL[1]-.95,S*4.7],[pN[0]+.4,pN[1]-.55,S*4.75],[pN[0]+.1,pN[1]-.05,S*5.0]],.12)).userData.nb=true;
-    [pM,pN].forEach(function(pp,i){var g=grp(),el=cyl(.13,.5,ZN,16,'z');el.position.z=-S*.25;g.add(el);var e2=cyl(.13,.45,ZN,16);e2.position.set(0,(pp[1]>0?1:-1)*.2,-S*.5);g.add(e2);g.position.set(pp[0]-.35,pp[1],S*4.9);P(93,[0,1.5,S*1.5],g).userData.nb=!(sh&&i===0);
-      var qd=grp(),qb=cyl(.17,.4,ZN,6);qd.add(qb);qd.position.set(pp[0]-.35,pp[1]+(pp[1]>0?1:-1)*.62,S*4.4);P(62,[0,2,S*1.5],qd).userData.nb=!(sh&&i===0);
-      var cp=cyl(.2,.22,RD,24);cp.position.set(pp[0]-.35,pp[1]+(pp[1]>0?1:-1)*.92,S*4.4);P(63,[0,2.6,S*1.5],cp).userData.nb=!(sh&&i===0);});
+    [pM,pN].forEach(function(pp,i){var g=grp(),el=cyl(.07,.3,ZN,16,'z');el.position.z=-S*.15;g.add(el);var e2=cyl(.07,.24,ZN,16);e2.position.set(0,(pp[1]>0?1:-1)*.11,-S*.3);g.add(e2);g.position.set(pp[0]-.3,pp[1],S*5.0);P(93,[0,1.5,S*1.5],g).userData.nb=!(sh&&i===0);
+      var qd=grp(),qb=cyl(.09,.2,ZN,6);qd.add(qb);qd.position.set(pp[0]-.3,pp[1]+(pp[1]>0?1:-1)*.32,S*4.7);P(62,[0,2,S*1.5],qd).userData.nb=!(sh&&i===0);
+      var cp=cyl(.1,.11,RD,24);cp.position.set(pp[0]-.3,pp[1]+(pp[1]>0?1:-1)*.47,S*4.7);P(63,[0,2.6,S*1.5],cp).userData.nb=!(sh&&i===0);});
   });
 });
-V3D.frtras.real=true;V3D.frtras.hq=true;V3D.frtras.hDir=[.6,1.45,.8];V3D.frtras.dDir=[.6,1.45,.8];V3D.frtras.fitArmado=true;V3D.frtras.fitK=.9;
+V3D.frtras.real=true;V3D.frtras.hq=true;V3D.frtras.hDir=[.55,1.9,.45];V3D.frtras.dDir=[.55,1.9,.45];V3D.frtras.fitArmado=true;V3D.frtras.fitK=.9;
 V3D.frtras.keep={'TX':1,'BAS':1,'EJE':1,'AF':1,'FRD':1,'FRI':1};
 V3D.frtras.colors={'BAS':0xd88a00,'EJE':0xd88a00,'AF':0xd88a00,'FRD':0x5d6166,'FRI':0x5d6166,'B1':0x5d6166,'B2':0x5d6166,'A1':0xd88a00,'A2':0xd88a00,'34':0xcbb98a,'21':0xcbb98a,'35':0xcbb98a,'51':0xcbb98a,'55':0xcbb98a,'56':0xcbb98a,'93':0xcbb98a,'62':0xcbb98a,'63':0xb3241b,'33':0x111111,'H58':0x161616,'H59':0x161616,'H96':0x161616,'T40A':0x2b2e31,'T40B':0x2b2e31,'T53':0x2b2e31,'T60':0x2b2e31,'T54':0x2b2e31,'T61':0x2b2e31,'T57':0x2b2e31};
 V3D.frtras.extra=function(P,K,bb){var L=Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z)*.14;window.flechaFR(P,K,L,[12.6,3.84,0],false,-Math.PI/2,0,0);};
