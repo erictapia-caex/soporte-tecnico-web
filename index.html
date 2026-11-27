@@ -4945,114 +4945,123 @@ V3D.retman=new Viewer(function(P,K){var T=K.T,ST=HQ.steel(T,0xc9cdd1,.3),ZN=HQ.z
 V3D.retman.real=true;V3D.retman.hq=true;V3D.retman.dDir=[.6,.4,1];V3D.retman.fitArmado=true;V3D.retman.fitK=1.05;
 V3D.retman.colors={'AB':0x2b2d30,'EX':0x121212,'V':0x2b2d30,'1':0xa7ae98,'2':0x101010,'3':0x111111,'4':0xc9cdd1,'29':0xcbb98a,'43':0xcbb98a,'44':0xcbb98a,'69':0x161616,'69A':0x161616};
 V3D.retman.extra=function(P,K,bb){var L=Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z)*.14;window.flechaFR(P,K,Math.min(L,1.45),[-2.8,-.86,-.3],false,-Math.PI/2,0,Math.PI/2);};
-// ---------- LÍNEAS DE ENFRIAMIENTO DE FRENOS TRASEROS (bridas 1P-4584) · 162-2634 vista superior y lateral trasera, sobre el chasis ----------
+// ---------- FLEXIBLES DE ENFRIAMIENTO DE FRENO TRASERO (bridas 1P-4584) · 162-2634 vista superior y lateral trasera, sobre el chasis · escala 1 = 25 cm ----------
 V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
-  PY=HQ.paint(T,0xc98000),PG=(function(){var m=HQ.paint(T,0xc98000);return m;})(),CG=HQ.cast(T,0x5d6166),
-  TU=new T.MeshStandardMaterial({color:new T.Color(0x2b2e31).convertSRGBToLinear(),metalness:.55,roughness:.38,envMapIntensity:1}),
+  PY=HQ.paint(T,0xc98000),CG=HQ.cast(T,0x5d6166),
+  ST=new T.MeshStandardMaterial({color:new T.Color(0x9a9fa4).convertSRGBToLinear(),metalness:.75,roughness:.32,envMapIntensity:1.1}),
+  TU=new T.MeshStandardMaterial({color:new T.Color(0x8d9298).convertSRGBToLinear(),metalness:.7,roughness:.3,envMapIntensity:1.1}),
   OR=new T.MeshStandardMaterial({color:new T.Color(0x111111).convertSRGBToLinear(),roughness:.85}),
   RD=new T.MeshStandardMaterial({color:new T.Color(0xb3241b).convertSRGBToLinear(),roughness:.6,metalness:.1});
   function M(g,m){return HQ.mesh(g,m);}
   function V(a){return new T.Vector3(a[0],a[1],a[2]);}
   function cyl(r,h,m,s,ax){var c=M(new T.CylinderGeometry(r,r,h,s||32),m);if(ax==='x')c.rotation.z=Math.PI/2;if(ax==='z')c.rotation.x=Math.PI/2;return c;}
+  function ring(ro,ri,h,m,s){var sh=new T.Shape();sh.absarc(0,0,ro,0,Math.PI*2,false);var ho=new T.Path();ho.absarc(0,0,ri,0,Math.PI*2,true);sh.holes.push(ho);
+    var g=new T.ExtrudeGeometry(sh,{depth:h,bevelEnabled:true,bevelSize:.04,bevelThickness:.04,bevelSegments:2,curveSegments:s||64});g.translate(0,0,-h/2);return M(g,m);}
   function grp(){return new T.Group();}
-  function dirQ(o,d){o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),V(d).normalize());return o;}
-  function tubo(pts,r){var c=new T.CatmullRomCurve3(pts.map(V),false,'catmullrom',.1);return M(new T.TubeGeometry(c,160,r,18,false),TU);}
-  function rot(txt,p,sz,col){var W=txt.length<=2?200:1024,cv=document.createElement('canvas');cv.width=W;cv.height=150;var x=cv.getContext('2d');x.fillStyle='rgba(12,22,38,.86)';x.fillRect(0,0,W,150);x.fillStyle=col||'#ffd23f';x.font='bold '+(W<300?110:70)+'px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,W/2,80);
+  function tubo(pts,r){var c=new T.CatmullRomCurve3(pts.map(V),false,'catmullrom',.15);return M(new T.TubeGeometry(c,160,r,16,false),TU);}
+  function rot(txt,p,sz,col){var W=1024,cv=document.createElement('canvas');cv.width=W;cv.height=150;var x=cv.getContext('2d');x.fillStyle='rgba(12,22,38,.86)';x.fillRect(0,0,W,150);x.fillStyle=col||'#ffd23f';x.font='bold 70px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,W/2,80);
     var sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(cv),depthTest:false,transparent:true}));sp.scale.set(sz||3,(sz||3)*150/W,1);sp.position.copy(V(p));sp.renderOrder=9;sp.userData.own=true;sp.raycast=function(){};return sp;}
-  // terminal de manguera con brida SAE (hombro + casquillo prensado) en p, manguera saliendo hacia d
-  function term(g,p,d){var q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),V(d).normalize()),r=.2,v=V(p),dd=V(d).normalize();
+  var RH=.11,RT=.075;
+  // terminal de manguera con brida SAE: hombro + casquillo prensado hexagonal
+  function term(g,p,d){var q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),V(d).normalize()),r=RH,v=V(p),dd=V(d).normalize();
     function at(o,s){o.quaternion.copy(q);o.position.copy(v).addScaledVector(dd,s);g.add(o);}
-    at(M(new T.CylinderGeometry(r*1.55,r*1.55,r*.45,36),ZN),r*.22);at(M(new T.CylinderGeometry(r*.9,r*1.2,r*.9,28),ZN),r*.9);
-    var cr=ZN.clone();cr.flatShading=true;at(M(new T.CylinderGeometry(r*1.32,r*1.32,r*2.6,8),cr),r*2.65);
-    at(M(new T.CylinderGeometry(r*1.2,r*1.36,r*.22,28),ZN),r*1.25);at(M(new T.CylinderGeometry(r*1.36,r*1.12,r*.22,28),ZN),r*4.0);return v.clone().addScaledVector(dd,r*4.1);}
-  // manguera con terminal de brida en AMBOS extremos
-  function hose2(pts,r){var g=grp(),n=pts.length,a=term(g,pts[0],[pts[1][0]-pts[0][0],pts[1][1]-pts[0][1],pts[1][2]-pts[0][2]]),b=term(g,pts[n-1],[pts[n-2][0]-pts[n-1][0],pts[n-2][1]-pts[n-1][1],pts[n-2][2]-pts[n-1][2]]);
-    var mid=pts.slice(1,n-1).map(V);g.add(M(new T.TubeGeometry(new T.CatmullRomCurve3([a].concat(mid,[b]),false,'catmullrom',.2),120,r,24,false),RB));return g;}
-  // brida partida 1P-4584 (2 mitades) + sello 6J-2680 + 4 pernos 8T-8919 con arandela 8T-4223, cara en p mirando hacia d (lado de la manguera)
-  function brida(p,d,show){var q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),V(d).normalize()),off=V(d).normalize().multiplyScalar(.9);off.y+=.6;var o=[off.x,off.y,off.z];
-    [-1,1].forEach(function(s){var gg=grp(),h=M(new T.BoxGeometry(.34,.15,.9),ZN);h.position.set(s*.19,.17,0);gg.add(h);var ear=M(new T.CylinderGeometry(.13,.13,.15,16),ZN);ear.position.set(s*.19,.17,.45);gg.add(ear);var ear2=ear.clone();ear2.position.z=-.45;gg.add(ear2);
+    at(M(new T.CylinderGeometry(r*1.5,r*1.5,r*.5,32),ZN),r*.25);at(M(new T.CylinderGeometry(r*.95,r*1.15,r*1.0,24),ZN),r*1.0);
+    var cr=ZN.clone();cr.flatShading=true;at(M(new T.CylinderGeometry(r*1.3,r*1.3,r*2.8,8),cr),r*2.9);return v.clone().addScaledVector(dd,r*4.3);}
+  function hose2(pts){var g=grp(),n=pts.length,a=term(g,pts[0],[pts[1][0]-pts[0][0],pts[1][1]-pts[0][1],pts[1][2]-pts[0][2]]),b=term(g,pts[n-1],[pts[n-2][0]-pts[n-1][0],pts[n-2][1]-pts[n-1][1],pts[n-2][2]-pts[n-1][2]]);
+    g.add(M(new T.TubeGeometry(new T.CatmullRomCurve3([a].concat(pts.slice(1,n-1).map(V),[b]),false,'catmullrom',.25),120,RH,20,false),RB));return g;}
+  function hose1(pts){var g=grp(),n=pts.length,a=term(g,pts[0],[pts[1][0]-pts[0][0],pts[1][1]-pts[0][1],pts[1][2]-pts[0][2]]);
+    g.add(M(new T.TubeGeometry(new T.CatmullRomCurve3([a].concat(pts.slice(1).map(V)),false,'catmullrom',.25),120,RH,20,false),RB));return g;}
+  // brida partida 1P-4584: 2 mitades con orejas + sello 6J-2680 + 4 pernos 8T-8919 (cara en p, hacia d)
+  function brida(p,d,show){var q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),V(d).normalize()),off=V(d).normalize().multiplyScalar(.6);off.y+=.5;var o=[off.x,off.y,off.z];
+    [-1,1].forEach(function(s){var gg=grp(),h=HQ.rblock(T,.13,.08,.44,.025,ZN);h.position.set(s*.1,.06,0);gg.add(h);
       gg.quaternion.copy(q);gg.position.copy(V(p));P(34,o,gg).userData.nb=!(show&&s>0);});
-    var orr=M(new T.TorusGeometry(.2,.035,8,28).rotateX(Math.PI/2),OR);orr.quaternion.copy(q);orr.position.copy(V(p));P(33,[o[0]*.6,o[1]*.6,o[2]*.6],orr).userData.nb=!show;
-    [[-.19,-.45],[-.19,.45],[.19,-.45],[.19,.45]].forEach(function(b,i){var bo=HQ.hexBolt(T,.55,.055,ZN),of=new T.Vector3(b[0],-.03,b[1]).applyQuaternion(q);bo.quaternion.copy(q);bo.position.copy(V(p)).add(of);P(21,[o[0]*1.3,o[1]*1.3,o[2]*1.3],bo).userData.nb=!(show&&i===0);});}
-  // media abrazadera 6V-8521 (35) con perno 5C-6565 (51) sobre un tubo
-  function abraz(p,d,show){var g=grp(),q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),V(d).normalize());var b=M(new T.BoxGeometry(.75,.22,.36),ZN);b.position.y=.2;g.add(b);var tp=M(new T.CylinderGeometry(.22,.22,.36,20,1,false,0,Math.PI).rotateX(Math.PI/2),ZN);tp.position.y=.06;g.add(tp);g.quaternion.copy(q);g.position.copy(V(p));P(35,[0,1.2,0],g).userData.nb=!show;
-    [-1,1].forEach(function(s,i){var bo=HQ.hexBolt(T,.5,.05,ZN),of=new T.Vector3(s*.27,.06,0).applyQuaternion(q);bo.quaternion.copy(q);bo.position.copy(V(p)).add(of);P(51,[0,1.6,0],bo).userData.nb=!(show&&i===0);});}
-  // ===== CHASIS (referencia, colores reales) =====
-  // bastidor: dos largueros de cajón con el buje del pasador de la tolva atrás, travesaño trasero y travesaño del A-frame
-  var bas=grp();[1,-1].forEach(function(S){var r=HQ.rblock(T,15.2,1.5,.78,.1,PG);r.position.set(5.4,3.3,S*3.4);bas.add(r);
-    var up=HQ.rblock(T,2.2,1.4,.78,.1,PG);up.rotation.z=-.42;up.position.set(-2.55,3.9,S*3.4);bas.add(up);
-    var bj=cyl(.62,1.05,PG,40,'z');bj.position.set(-3.45,4.45,S*3.4);bas.add(bj);var bh=cyl(.3,1.08,CG,24,'z');bh.position.copy(bj.position);bas.add(bh);
-    var lip=HQ.rblock(T,15.2,.08,1.05,.03,PG);lip.position.set(5.4,2.56,S*3.4);bas.add(lip);var lip2=lip.clone();lip2.position.y=4.04;bas.add(lip2);});
-  var tr=cyl(.5,6.0,PG,40,'z');tr.position.set(-1.6,3.25,0);bas.add(tr);
-  var taf=HQ.rblock(T,1.1,1.0,6.0,.1,PG);taf.position.set(10.6,2.75,0);bas.add(taf);
-  var tdel=HQ.rblock(T,.9,1.2,6.0,.1,PG);tdel.position.set(12.6,3.2,0);bas.add(tdel);
-  
-  P('BAS',[0,0,0],bas);
-  // caja del eje trasero: banjo central con el carrier hacia adelante, tubos a cada lado
-  var eje=grp(),bw=M(new T.SphereGeometry(1.75,48,32),PY);bw.scale.set(1,1,.8);eje.add(bw);
-  var car=M(new T.CylinderGeometry(1.15,1.45,1.5,40),PY);car.rotation.z=-Math.PI/2;car.position.x=1.9;eje.add(car);
-  var cf=cyl(1.25,.18,PY,40,'x');cf.position.x=2.72;eje.add(cf);var yo=cyl(.55,.6,CG,24,'x');yo.position.x=3.1;eje.add(yo);
-  for(var i=0;i<16;i++){var a=i/16*Math.PI*2,bb=cyl(.07,.12,ZN,8,'x');bb.position.set(2.85,Math.cos(a)*1.1,Math.sin(a)*1.1);eje.add(bb);}
-  [1,-1].forEach(function(S){var tb=M(new T.CylinderGeometry(.95,1.2,3.9,40),PY);tb.rotation.x=Math.PI/2;tb.position.z=S*3.35;eje.add(tb);
-    var fl=cyl(1.6,.22,PY,48,'z');fl.position.z=S*5.35;eje.add(fl);
-    for(var j=0;j<20;j++){var a2=j/20*Math.PI*2,bo=cyl(.07,.3,ZN,8,'z');bo.position.set(Math.cos(a2)*1.42,Math.sin(a2)*1.42,S*5.3);eje.add(bo);}
-    var mf=cyl(1.55,.85,PY,48,'z');mf.position.z=S*7.2;eje.add(mf);var tap=cyl(.85,.2,PY,40,'z');tap.position.z=S*7.7;eje.add(tap);
-    for(var j2=0;j2<12;j2++){var a3=j2/12*Math.PI*2,bo2=cyl(.06,.2,ZN,8,'z');bo2.position.set(Math.cos(a3)*1.3,Math.sin(a3)*1.3,S*7.65);eje.add(bo2);}});
-  
+    var orr=M(new T.TorusGeometry(RH*.95,.014,8,24).rotateX(Math.PI/2),OR);orr.quaternion.copy(q);orr.position.copy(V(p));P(33,[o[0]*.6,o[1]*.6,o[2]*.6],orr).userData.nb=!show;
+    [[-.1,-.17],[-.1,.17],[.1,-.17],[.1,.17]].forEach(function(b,i){var bo=HQ.hexBolt(T,.2,.022,ZN),of=new T.Vector3(b[0],.02,b[1]).applyQuaternion(q);bo.quaternion.copy(q);bo.position.copy(V(p)).add(of);P(21,[o[0]*1.3,o[1]*1.3,o[2]*1.3],bo).userData.nb=!(show&&i===0);});}
+  // media abrazadera 6V-8521 (35) + perno 5C-6565 (51)
+  function abraz(p,show){var g=grp(),b=HQ.rblock(T,.32,.07,.13,.02,ZN);b.position.y=RT+.035;g.add(b);var tp=M(new T.CylinderGeometry(RT+.03,RT+.03,.13,16,1,true,-Math.PI/2,Math.PI).rotateX(Math.PI/2),ZN);g.add(tp);g.position.copy(V(p));P(35,[0,.8,0],g).userData.nb=!show;
+    [-1,1].forEach(function(s,i){var bo=HQ.hexBolt(T,.2,.02,ZN);bo.position.set(p[0]+s*.12,p[1]+RT-.02,p[2]);P(51,[0,1.1,0],bo).userData.nb=!(show&&i===0);});}
+  // ===== CHASIS (referencia) =====
+  var bas=grp();[1,-1].forEach(function(S){var r=HQ.rblock(T,14.4,2.0,1.1,.12,PY);r.position.set(4.6,4.0,S*2.7);bas.add(r);
+    [3.0,5.0].forEach(function(y){var lip=HQ.rblock(T,14.4,.1,1.4,.03,PY);lip.position.set(4.6,y,S*2.7);bas.add(lip);});});
+  var tr=cyl(.7,4.3,PY,40,'z');tr.position.set(-2.0,4.0,0);bas.add(tr);
+  var taf=HQ.rblock(T,1.4,1.4,4.3,.12,PY);taf.position.set(10.6,3.6,0);bas.add(taf);
+  var tdel=HQ.rblock(T,1.1,1.8,4.3,.12,PY);tdel.position.set(11.25,4.0,0);bas.add(tdel);
+  P('BAS',[0,-14,0],bas);
+  // caja del eje trasero: cuerpo central de cajón, brazos que pasan de cajón a redondo, brida de freno, carrier al frente y tapa atrás
+  var eje=grp(),cen=HQ.rblock(T,3.6,3.2,4.4,.35,PY);eje.add(cen);
+  var nose=M(new T.CylinderGeometry(1.15,1.45,1.0,40),PY);nose.rotation.z=-Math.PI/2;nose.position.x=2.3;eje.add(nose);
+  var cfl=cyl(1.25,.16,PY,40,'x');cfl.position.x=2.85;eje.add(cfl);var yo=cyl(.5,.5,ST,24,'x');yo.position.x=3.15;eje.add(yo);
+  for(var i=0;i<16;i++){var a0=i/16*Math.PI*2,bb=cyl(.05,.1,ZN,8,'x');bb.position.set(2.95,Math.cos(a0)*1.08,Math.sin(a0)*1.08);eje.add(bb);}
+  var tap=cyl(1.3,.14,PY,48,'x');tap.position.x=-1.85;eje.add(tap);
+  for(var i2=0;i2<20;i2++){var a1=i2/20*Math.PI*2,b2=cyl(.05,.1,ZN,8,'x');b2.position.set(-1.95,Math.cos(a1)*1.15,Math.sin(a1)*1.15);eje.add(b2);}
+  [1,-1].forEach(function(S){var bx=HQ.rblock(T,3.0,2.6,1.4,.3,PY);bx.position.z=S*2.8;eje.add(bx);
+    var cn=M(new T.CylinderGeometry(1.35,1.55,1.0,40),PY);cn.rotation.x=Math.PI/2;cn.position.z=S*3.9;eje.add(cn);
+    var tb=cyl(1.3,.5,PY,40,'z');tb.position.z=S*4.5;eje.add(tb);
+    var fl=cyl(1.75,.2,PY,48,'z');fl.position.z=S*4.72;eje.add(fl);
+    for(var j=0;j<18;j++){var a2=j/18*Math.PI*2,bo=cyl(.045,.16,ZN,8,'z');bo.position.set(Math.cos(a2)*1.6,Math.sin(a2)*1.6,S*4.66);eje.add(bo);}
+    var sp=cyl(.9,2.6,ST,40,'z');sp.position.z=S*5.9;eje.add(sp);
+    var fd=ring(2.25,.9,1.1,PY);fd.position.z=S*6.9;eje.add(fd);var fc=cyl(1.15,.35,PY,40,'z');fc.position.z=S*7.55;eje.add(fc);
+    for(var j2=0;j2<14;j2++){var a3=j2/14*Math.PI*2,bo2=cyl(.045,.14,ZN,8,'z');bo2.position.set(Math.cos(a3)*.95,Math.sin(a3)*.95,S*7.72);eje.add(bo2);}
+    var pad=HQ.rblock(T,1.1,.3,1.1,.06,PY);pad.position.set(-.2,1.45,S*2.7);eje.add(pad);});
   P('EJE',[0,0,0],eje);
-  // A-frame: dos brazos de cajón desde la caja del eje hasta la rótula bajo el travesaño
-  var af=grp();[1,-1].forEach(function(S){var x0=1.4,z0=2.35,x1=10.3,z1=.35,L=Math.hypot(x1-x0,z1-z0),bx=HQ.rblock(T,L,.8,.62,.1,PY);bx.position.set((x0+x1)/2,.25,S*(z0+z1)/2);bx.rotation.y=S*Math.atan2(z0-z1,x1-x0);af.add(bx);});
-  var rt=M(new T.SphereGeometry(.6,32,20),CG);rt.position.set(10.45,.55,0);af.add(rt);var so=cyl(.7,.9,PY,32);so.position.set(10.45,1.6,0);af.add(so);
-  
+  // A-frame: brazos de cajón apernados al frente de la caja, rótula adelante
+  var az=function(x){return 2.0+(.45-2.0)*(x-1.9)/(10.5-1.9);};
+  var af=grp();[1,-1].forEach(function(S){var x0=1.9,x1=10.5,z0=2.0,z1=.45,L=Math.hypot(x1-x0,z1-z0),bx=HQ.rblock(T,L,1.1,.8,.12,PY);bx.position.set((x0+x1)/2,0,S*(z0+z1)/2);bx.rotation.y=S*Math.atan2(z0-z1,x1-x0);af.add(bx);
+    var ft=HQ.rblock(T,.25,1.6,1.3,.05,PY);ft.position.set(1.95,0,S*2.0);af.add(ft);
+    for(var k2=0;k2<4;k2++){var bo=HQ.hexBolt(T,.3,.05,ZN);bo.rotation.z=-Math.PI/2;bo.position.set(2.15,(k2<2?.5:-.5),S*(2.0+(k2%2?.4:-.4)));af.add(bo);}});
+  var rt=M(new T.SphereGeometry(.55,32,20),ST);rt.position.set(10.7,.3,0);af.add(rt);var so=cyl(.75,1.6,PY,32);so.position.set(10.7,1.6,0);af.add(so);
   P('AF',[0,0,0],af);
-  // frenos traseros (cubo del freno húmedo) con sus 4 puertas en la cara interior: K y L adelante, M y N atrás
-  var PT={K:[1.3,1.3],L:[1.3,-1.3],M:[-1.3,1.3],N:[-1.3,-1.3]};
-  [1,-1].forEach(function(S){var fr=grp(),hz=cyl(2.35,1.3,CG,64,'z');hz.position.z=S*6.1;fr.add(hz);
-    [5.45,6.75].forEach(function(zf){var rg=cyl(2.45,.12,CG,64,'z');rg.position.z=S*zf;fr.add(rg);for(var j=0;j<24;j++){var a=j/24*Math.PI*2,bo=cyl(.07,.25,ZN,8,'z');bo.position.set(Math.cos(a)*2.28,Math.sin(a)*2.28,S*zf);fr.add(bo);}});
-    Object.keys(PT).forEach(function(k){var pd=HQ.rblock(T,.62,.62,.2,.06,CG);pd.rotation.x=Math.PI/2;pd.position.set(PT[k][0],PT[k][1],S*5.35);fr.add(pd);});
-    
+  // frenos traseros: anillo gris del freno húmedo (abierto al centro) entre la brida de la caja y el mando final; 4 puertas en la cara interior
+  var PT={K:[1.55,1.55],L:[1.55,-1.55],M:[-1.55,1.55],N:[-1.55,-1.55]},ZF=4.82;
+  [1,-1].forEach(function(S){var fr=grp(),hz=ring(2.6,1.0,1.3,CG,72);hz.position.z=S*5.5;fr.add(hz);
+    [4.88,6.12].forEach(function(zf){var rg=ring(2.68,2.3,.1,CG,72);rg.position.z=S*zf;fr.add(rg);for(var j=0;j<36;j++){var a=j/36*Math.PI*2,bo=cyl(.045,.16,ZN,8,'z');bo.position.set(Math.cos(a)*2.48,Math.sin(a)*2.48,S*(zf+(zf<5?-.07:.07)));fr.add(bo);}});
+    Object.keys(PT).forEach(function(k){var pd=HQ.rblock(T,.42,.42,.14,.04,CG);pd.position.set(PT[k][0],PT[k][1],S*(ZF-.02));fr.add(pd);});
     P(S>0?'FRD':'FRI',[0,0,0],fr);});
-  // ===== LÍNEAS (por lado) =====
-  [1,-1].forEach(function(S,k){var sh=k===0,az=function(x){return 2.35+(.35-2.35)*(x-1.4)/(10.3-1.4);};
-    // manguera del bastidor al A-frame: 59 = 8W-4033 (derecha) / 96 = 8W-4032 (izquierda); extremo libre cortado (viene del enfriador)
-    var pJ=[7.6,.83,S*(az(7.6)+.55)];
-    P(S>0?'H59':'H96',[0,2.2,S*.8],HQ.hose(T,[pJ,[8.3,.83,pJ[2]],[9.6,1.4,S*2.3],[10.6,2.2,S*2.7],[11.7,2.3,S*2.75]],.2,RB,ZN));
+  // ===== LÍNEAS (por lado). Mangueras negras, tubos grises =====
+  [1,-1].forEach(function(S,k){var sh=k===0,yT=.55+RT+.02;
+    // manguera 59 (der.) / 96 (izq.): baja del bastidor y se aperna al tubo 40; el otro extremo, cortado, viene del enfriador
+    var pJ=[7.8,yT,S*(az(7.8)+.1)];
+    P(S>0?'H59':'H96',[0,2.2,S*.8],hose1([pJ,[8.5,yT+.05,pJ[2]],[9.3,.9,S*1.7],[9.9,2.2,S*1.85],[10.4,2.75,S*1.85],[11.4,2.8,S*1.85]]));
     brida(pJ,[1,0,0],sh);
-    var lb=rot('VIENE DEL ENFRIADOR',[12.3,1.5,S*2.75],3.4,'#9fe0ff');P('TX',[0,0,0],lb).userData.nb=true;
+    P('TX',[0,0,0],rot('VIENE DEL ENFRIADOR',[12.2,2.2,S*1.85],3.4,'#9fe0ff')).userData.nb=true;
     // tubo 40 (8W-0999) sobre el brazo del A-frame hasta la unión B
-    P(S>0?'T40A':'T40B',[0,2,S*.6],tubo([[7.55,.83,pJ[2]],[6.6,.82,S*(az(6.6)+.55)],[5.6,.86,S*(az(5.6)+.5)],[5.15,1.0,S*2.05]],.14));
-    // B: unión en el brazo del A-frame
-    var b=grp();b.add(HQ.rblock(T,1.0,.75,.9,.12,CG));var pl=HQ.rblock(T,1.3,.12,1.1,.04,CG);pl.position.y=-.42;b.add(pl);b.position.set(4.6,1.1,S*2.1);
-    P(S>0?'B1':'B2',[0,2.4,S*.6],b);
-    // manguera 58 (8W-0973) de la unión B a la entrada A del eje, con bridas 1P-4584 en los dos extremos
-    P('H58',[0,2.8,S*.6],hose2([[4.1,1.1,S*2.1],[3.5,1.12,S*2.1],[2.9,1.45,S*2.25],[2.3,1.2,S*2.2],[1.95,1.0,S*2.1]],.2)).userData.nb=!sh;
-    brida([4.1,1.1,S*2.1],[-1,0,0],sh);brida([1.95,1.0,S*2.1],[1,0,0],false);
-    
-    // A: entrada en la caja del eje
-    var a=grp();a.add(HQ.rblock(T,.75,.75,.9,.1,PY));a.position.set(1.55,1.0,S*2.1);P(S>0?'A1':'A2',[0,2.2,S*.6],a);
-    // tubo 53 (8W-8380, derecha) / 60 (115-9206, izquierda): de B a la puerta K (arriba-adelante) del freno
+    var xB=4.6,zB=az(xB);
+    P(S>0?'T40A':'T40B',[0,2,S*.6],tubo([[7.78,yT,pJ[2]],[6.8,yT,S*(az(6.8)+.08)],[5.6,yT,S*(az(5.6)+.03)],[xB+.3,yT,S*zB]],RT));
+    abraz([6.4,yT,S*(az(6.4)+.06)],sh);
+    // B: bloque de unión sobre el brazo del A-frame
+    var b=grp();b.add(HQ.rblock(T,.5,.4,.45,.05,CG));var pl=HQ.rblock(T,.7,.06,.6,.02,CG);pl.position.y=-.22;b.add(pl);b.position.set(xB,.55+.25,S*zB);P(S>0?'B1':'B2',[0,2.0,S*.5],b);
+    // manguera 58 (8W-0973): de B (atrás) a la entrada A sobre la caja del eje, brida 1P-4584 en ambos extremos
+    var yA=1.75,xA=2.05;
+    P('H58',[0,2.6,S*.5],hose2([[xB-.25,.8,S*zB],[3.9,.85,S*zB],[3.3,1.35,S*(zB+.15)],[2.75,1.85,S*(zB+.1)],[xA+.22,yA+.05,S*zB]])).userData.nb=!sh;
+    brida([xB-.25,.8,S*zB],[-1,0,0],sh);brida([xA+.2,yA,S*zB],[1,0,0],false);
+    // A: entrada en la esquina delantera-superior de la caja del eje
+    var a=grp();a.add(HQ.rblock(T,.4,.4,.45,.05,PY));a.position.set(xA,yA,S*zB);P(S>0?'A1':'A2',[0,2.0,S*.5],a);
+    // tubo 53 (der.) / 60 (izq.): de B hacia afuera, por encima del brazo de la caja, a la puerta K del freno
     var pK=PT.K,pL=PT.L,pM=PT.M,pN=PT.N;
-    brida([4.6,1.1,S*2.55],[0,0,S],false);
-    P(S>0?'T53':'T60',[0,2.6,S*1.4],tubo([[4.6,1.1,S*2.55],[4.6,1.15,S*2.85],[4.0,1.5,S*2.95],[2.8,1.75,S*2.95],[1.9,1.8,S*3.1],[1.55,1.75,S*3.9],[1.4,1.55,S*4.7],[pK[0],pK[1],S*5.1],[pK[0],pK[1],S*5.25]],.14));
-    abraz([4.25,1.32,S*2.92],[0,1,0],sh);abraz([1.7,1.95,S*3.3],[0,1,0],false);
-    // tubo 54 (5T-7620, derecha) / 61 (5T-7617, izquierda): de A por delante de la caja hasta la puerta L y sigue por atrás a N
-    brida([1.55,1.0,S*2.55],[0,0,S],false);
-    P(S>0?'T54':'T61',[0,2.2,S*1.6],tubo([[1.55,1.0,S*2.55],[1.6,1.0,S*3.0],[1.55,.75,S*4.1],[1.5,-.2,S*4.8],[pL[0],pL[1],S*5.1],[pL[0],pL[1],S*5.25]],.14));
-    abraz([1.62,1.15,S*3.1],[0,1,0],false);
-    // en las puertas: adaptador K y L, tubo 57 (5T-7618) de K a M; codo 93 + acople rápido 62 + tapa 63 en M y N
-    [['K',pK],['L',pL],['M',pM],['N',pN]].forEach(function(e,i){var g=grp(),fb=HQ.rblock(T,.5,.5,.32,.05,ZN);fb.rotation.x=Math.PI/2;g.add(fb);g.position.set(e[1][0],e[1][1],S*5.12);P(55,[0,1.5,S*1.2],g).userData.nb=!(sh&&i===0);
-      [-1,1].forEach(function(s2,j){var bo=HQ.hexBolt(T,.6,.05,ZN);bo.rotation.x=S>0?-Math.PI/2:Math.PI/2;bo.position.set(e[1][0]+s2*.16,e[1][1]-s2*.16,S*5.25);P(56,[0,1.5,S*2],bo).userData.nb=!(sh&&i===0&&j===0);});});
-    P('T57',[0,2.2,S*1.4],tubo([[pK[0]-.1,pK[1]+.05,S*5.0],[pK[0]-.4,pK[1]+.55,S*4.75],[0,pK[1]+.95,S*4.7],[pM[0]+.4,pM[1]+.55,S*4.75],[pM[0]+.1,pM[1]+.05,S*5.0]],.12)).userData.nb=!sh;
-    P(S>0?'T54':'T61',[0,2.2,S*1.6],tubo([[pL[0]-.1,pL[1]-.05,S*5.0],[pL[0]-.4,pL[1]-.55,S*4.75],[0,pL[1]-.95,S*4.7],[pN[0]+.4,pN[1]-.55,S*4.75],[pN[0]+.1,pN[1]-.05,S*5.0]],.12)).userData.nb=true;
-    [pM,pN].forEach(function(pp,i){var g=grp(),el=cyl(.07,.3,ZN,16,'z');el.position.z=-S*.15;g.add(el);var e2=cyl(.07,.24,ZN,16);e2.position.set(0,(pp[1]>0?1:-1)*.11,-S*.3);g.add(e2);g.position.set(pp[0]-.3,pp[1],S*5.0);P(93,[0,1.5,S*1.5],g).userData.nb=!(sh&&i===0);
-      var qd=grp(),qb=cyl(.09,.2,ZN,6);qd.add(qb);qd.position.set(pp[0]-.3,pp[1]+(pp[1]>0?1:-1)*.32,S*4.7);P(62,[0,2,S*1.5],qd).userData.nb=!(sh&&i===0);
-      var cp=cyl(.1,.11,RD,24);cp.position.set(pp[0]-.3,pp[1]+(pp[1]>0?1:-1)*.47,S*4.7);P(63,[0,2.6,S*1.5],cp).userData.nb=!(sh&&i===0);});
+    brida([xB,.8,S*(zB+.23)],[0,0,S],false);
+    P(S>0?'T53':'T60',[0,2.4,S*1.2],tubo([[xB,.8,S*(zB+.25)],[xB,.85,S*(zB+.6)],[4.0,1.6,S*2.5],[3.0,2.05,S*3.0],[2.3,2.05,S*3.6],[1.85,1.85,S*4.2],[pK[0],pK[1],S*4.55],[pK[0],pK[1],S*(ZF-.1)]],RT));
+    abraz([3.4,1.9,S*2.8],false);
+    // tubo 54 (der.) / 61 (izq.): de A baja por delante de la caja a la puerta L y sigue por abajo del freno a la puerta N
+    brida([xA,yA,S*(zB+.23)],[0,0,S],false);
+    P(S>0?'T54':'T61',[0,2.2,S*1.4],tubo([[xA,yA,S*(zB+.25)],[xA+.05,yA,S*2.7],[2.25,1.2,S*3.4],[2.3,-.2,S*3.9],[2.0,-1.3,S*4.35],[pL[0],pL[1],S*4.55],[pL[0],pL[1],S*(ZF-.1)]],RT));
+    abraz([2.3,.5,S*3.75],false);
+    // en las puertas: brida de puerta con sello 55 y 2 pernos 56
+    [pK,pL,pM,pN].forEach(function(pp,i){var g=grp(),fb=HQ.rblock(T,.34,.34,.12,.03,ZN);g.add(fb);g.position.set(pp[0],pp[1],S*(ZF-.15));P(55,[0,1.2,S*1.0],g).userData.nb=!(sh&&i===0);
+      [-1,1].forEach(function(s2,j){var bo=HQ.hexBolt(T,.22,.022,ZN);bo.rotation.x=S>0?-Math.PI/2:Math.PI/2;bo.position.set(pp[0]+s2*.12,pp[1]-s2*.12,S*(ZF-.2));P(56,[0,1.2,S*1.6],bo).userData.nb=!(sh&&i===0&&j===0);});});
+    // tubo 57 (5T-7618): de K a M por arriba del freno
+    P('T57',[0,2.2,S*1.2],tubo([[pK[0]-.08,pK[1]+.1,S*(ZF-.25)],[1.0,2.25,S*(ZF-.3)],[0,2.45,S*(ZF-.3)],[-1.0,2.25,S*(ZF-.3)],[pM[0]+.08,pM[1]+.1,S*(ZF-.25)]],RT)).userData.nb=!sh;
+    // tramo del tubo 54/61 de L a N por abajo
+    P(S>0?'T54':'T61',[0,2.2,S*1.4],tubo([[pL[0]-.08,pL[1]-.1,S*(ZF-.25)],[1.0,-2.25,S*(ZF-.3)],[0,-2.45,S*(ZF-.3)],[-1.0,-2.25,S*(ZF-.3)],[pN[0]+.08,pN[1]-.1,S*(ZF-.25)]],RT)).userData.nb=true;
+    // toma de presión en M y N: codo 93 (6V-8077) + acople rápido 62 (6V-3965) + tapa 63 (6V-0852)
+    [pM,pN].forEach(function(pp,i){var up=pp[1]>0?1:-1,g=grp(),el=cyl(.04,.18,ZN,12,'z');el.position.z=-S*.09;g.add(el);var e2=cyl(.04,.14,ZN,12);e2.position.set(0,up*.06,-S*.18);g.add(e2);g.position.set(pp[0]-.25,pp[1],S*(ZF-.15));P(93,[0,1.2,S*1.2],g).userData.nb=!(sh&&i===0);
+      var qd=cyl(.055,.12,ZN,6);qd.position.set(pp[0]-.25,pp[1]+up*.18,S*(ZF-.33));P(62,[0,1.6,S*1.2],qd).userData.nb=!(sh&&i===0);
+      var cp=cyl(.06,.07,RD,20);cp.position.set(pp[0]-.25,pp[1]+up*.27,S*(ZF-.33));P(63,[0,2.0,S*1.2],cp).userData.nb=!(sh&&i===0);});
   });
 });
-V3D.frtras.real=true;V3D.frtras.hq=true;V3D.frtras.hDir=[.55,1.9,.45];V3D.frtras.dDir=[.55,1.9,.45];V3D.frtras.fitArmado=true;V3D.frtras.fitK=.9;
+V3D.frtras.real=true;V3D.frtras.hq=true;V3D.frtras.hDir=[.55,2.2,.35];V3D.frtras.dDir=[.55,2.2,.35];V3D.frtras.fitArmado=true;V3D.frtras.fitK=1.0;
 V3D.frtras.keep={'TX':1,'BAS':1,'EJE':1,'AF':1,'FRD':1,'FRI':1};
-V3D.frtras.colors={'BAS':0xd88a00,'EJE':0xd88a00,'AF':0xd88a00,'FRD':0x5d6166,'FRI':0x5d6166,'B1':0x5d6166,'B2':0x5d6166,'A1':0xd88a00,'A2':0xd88a00,'34':0xcbb98a,'21':0xcbb98a,'35':0xcbb98a,'51':0xcbb98a,'55':0xcbb98a,'56':0xcbb98a,'93':0xcbb98a,'62':0xcbb98a,'63':0xb3241b,'33':0x111111,'H58':0x161616,'H59':0x161616,'H96':0x161616,'T40A':0x2b2e31,'T40B':0x2b2e31,'T53':0x2b2e31,'T60':0x2b2e31,'T54':0x2b2e31,'T61':0x2b2e31,'T57':0x2b2e31};
-V3D.frtras.extra=function(P,K,bb){var L=Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z)*.14;window.flechaFR(P,K,L,[12.6,3.84,0],false,-Math.PI/2,0,0);};
+V3D.frtras.colors={'BAS':0xd88a00,'EJE':0xd88a00,'AF':0xd88a00,'FRD':0x5d6166,'FRI':0x5d6166,'B1':0x5d6166,'B2':0x5d6166,'A1':0xd88a00,'A2':0xd88a00,'34':0xcbb98a,'21':0xcbb98a,'35':0xcbb98a,'51':0xcbb98a,'55':0xcbb98a,'56':0xcbb98a,'93':0xcbb98a,'62':0xcbb98a,'63':0xb3241b,'33':0x111111,'H58':0x161616,'H59':0x161616,'H96':0x161616,'T40A':0x8d9298,'T40B':0x8d9298,'T53':0x8d9298,'T60':0x8d9298,'T54':0x8d9298,'T61':0x8d9298,'T57':0x8d9298};
+V3D.frtras.extra=function(P,K,bb){var L=Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z)*.14;window.flechaFR(P,K,L,[11.25,4.92,0],false,-Math.PI/2,0,0);};
 // ---------- RETARDADOR AUTOMÁTICO (ARC) 177-8840 ----------
 V3D.arc=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),ST=HQ.steel(T,0xc9cdd1,.3),RB=HQ.rubber(T),
   CI=HQ.cast(T,0x6c7176),AL=HQ.cast(T,0x80858a),
