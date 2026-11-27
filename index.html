@@ -8581,6 +8581,7 @@ window.addEventListener('popstate',function(){z.style.display='none'});
 
 </script>
 <script>/*sw-registro*/(function(){if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('sw.js').then(function(r){r.update();setInterval(function(){r.update();},30*60*1000);
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')r.update().catch(function(){});});window.addEventListener('focus',function(){r.update().catch(function(){});});
 r.addEventListener('updatefound',function(){var n=r.installing;n&&n.addEventListener('statechange',function(){if(n.state==='installed'&&navigator.serviceWorker.controller){n.postMessage('skip');}});});}).catch(function(){});
 var rec=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(rec)return;rec=true;location.reload();});})();</script>
 </body></html>
