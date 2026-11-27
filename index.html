@@ -4947,7 +4947,7 @@ V3D.retman.colors={'AB':0x2b2d30,'EX':0x121212,'V':0x2b2d30,'1':0xa7ae98,'2':0x1
 V3D.retman.extra=function(P,K,bb){var L=Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z)*.14;window.flechaFR(P,K,Math.min(L,1.45),[-2.8,-.86,-.3],false,-Math.PI/2,0,Math.PI/2);};
 // ---------- LÍNEAS DE ENFRIAMIENTO DE FRENOS TRASEROS (bridas 1P-4584) · 162-2634 vista superior y lateral trasera, sobre el chasis ----------
 V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
-  PY=HQ.paint(T,0xc98000),PG=new T.MeshStandardMaterial({color:new T.Color(0xd88a00).convertSRGBToLinear(),transparent:true,opacity:.26,depthWrite:false,roughness:.6,metalness:0}),CG=HQ.cast(T,0x5d6166),
+  PY=HQ.paint(T,0xc98000),PG=(function(){var m=HQ.paint(T,0xc98000);m.transparent=true;m.opacity=.55;m.depthWrite=false;return m;})(),CG=HQ.cast(T,0x5d6166),
   TU=new T.MeshStandardMaterial({color:new T.Color(0x2b2e31).convertSRGBToLinear(),metalness:.55,roughness:.38,envMapIntensity:1}),
   OR=new T.MeshStandardMaterial({color:new T.Color(0x111111).convertSRGBToLinear(),roughness:.85}),
   RD=new T.MeshStandardMaterial({color:new T.Color(0xb3241b).convertSRGBToLinear(),roughness:.6,metalness:.1});
@@ -4986,7 +4986,7 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
   var tr=cyl(.5,6.0,PG,40,'z');tr.position.set(-1.6,3.25,0);bas.add(tr);
   var taf=HQ.rblock(T,1.1,1.0,6.0,.1,PG);taf.position.set(10.6,2.75,0);bas.add(taf);
   var tdel=HQ.rblock(T,.9,1.2,6.0,.1,PG);tdel.position.set(12.6,3.2,0);bas.add(tdel);
-  bas.add(rot('BASTIDOR (transparente)',[12.6,4.6,-3.4],3.6,'#ffffff'));
+  
   bas.traverse(function(o){if(o.isMesh)o.raycast=function(){};});P('BAS',[0,0,0],bas);
   // caja del eje trasero: banjo central con el carrier hacia adelante, tubos a cada lado
   var eje=grp(),bw=M(new T.SphereGeometry(1.75,48,32),PY);bw.scale.set(1,1,.8);eje.add(bw);
@@ -4998,19 +4998,19 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
     for(var j=0;j<20;j++){var a2=j/20*Math.PI*2,bo=cyl(.07,.3,ZN,8,'z');bo.position.set(Math.cos(a2)*1.42,Math.sin(a2)*1.42,S*5.3);eje.add(bo);}
     var mf=cyl(1.55,.85,PY,48,'z');mf.position.z=S*7.2;eje.add(mf);var tap=cyl(.85,.2,PY,40,'z');tap.position.z=S*7.7;eje.add(tap);
     for(var j2=0;j2<12;j2++){var a3=j2/12*Math.PI*2,bo2=cyl(.06,.2,ZN,8,'z');bo2.position.set(Math.cos(a3)*1.3,Math.sin(a3)*1.3,S*7.65);eje.add(bo2);}});
-  eje.add(rot('CAJA DEL EJE TRASERO',[-2.2,1.9,0],3.3,'#ffffff'));
+  
   P('EJE',[0,0,0],eje);
   // A-frame: dos brazos de cajón desde la caja del eje hasta la rótula bajo el travesaño
   var af=grp();[1,-1].forEach(function(S){var x0=1.4,z0=2.35,x1=10.3,z1=.35,L=Math.hypot(x1-x0,z1-z0),bx=HQ.rblock(T,L,.8,.62,.1,PY);bx.position.set((x0+x1)/2,.25,S*(z0+z1)/2);bx.rotation.y=S*Math.atan2(z0-z1,x1-x0);af.add(bx);});
   var rt=M(new T.SphereGeometry(.6,32,20),CG);rt.position.set(10.45,.55,0);af.add(rt);var so=cyl(.7,.9,PY,32);so.position.set(10.45,1.6,0);af.add(so);
-  af.add(rot('A-FRAME',[7.6,-.9,0],2.0,'#ffffff'));
+  
   P('AF',[0,0,0],af);
   // frenos traseros (cubo del freno húmedo) con sus 4 puertas en la cara interior: K y L adelante, M y N atrás
   var PT={K:[1.3,1.3],L:[1.3,-1.3],M:[-1.3,1.3],N:[-1.3,-1.3]};
   [1,-1].forEach(function(S){var fr=grp(),hz=cyl(2.35,1.3,CG,64,'z');hz.position.z=S*6.1;fr.add(hz);
     [5.45,6.75].forEach(function(zf){var rg=cyl(2.45,.12,CG,64,'z');rg.position.z=S*zf;fr.add(rg);for(var j=0;j<24;j++){var a=j/24*Math.PI*2,bo=cyl(.07,.25,ZN,8,'z');bo.position.set(Math.cos(a)*2.28,Math.sin(a)*2.28,S*zf);fr.add(bo);}});
-    Object.keys(PT).forEach(function(k){var pd=HQ.rblock(T,.62,.62,.2,.06,CG);pd.rotation.x=Math.PI/2;pd.position.set(PT[k][0],PT[k][1],S*5.35);fr.add(pd);fr.add(rot(k,[PT[k][0]+(PT[k][0]>0?.25:-.25),PT[k][1]+(PT[k][1]>0?.65:-.65),S*5.0],.75));});
-    fr.add(rot(S>0?'FRENO TRASERO DERECHO':'FRENO TRASERO IZQUIERDO',[0,3.0,S*6.1],3.6));
+    Object.keys(PT).forEach(function(k){var pd=HQ.rblock(T,.62,.62,.2,.06,CG);pd.rotation.x=Math.PI/2;pd.position.set(PT[k][0],PT[k][1],S*5.35);fr.add(pd);});
+    
     P(S>0?'FRD':'FRI',[0,0,0],fr);});
   // ===== LÍNEAS (por lado) =====
   [1,-1].forEach(function(S,k){var sh=k===0,az=function(x){return 2.35+(.35-2.35)*(x-1.4)/(10.3-1.4);};
@@ -5023,13 +5023,13 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
     P(S>0?'T40A':'T40B',[0,2,S*.6],tubo([[7.55,.83,pJ[2]],[6.6,.82,S*(az(6.6)+.55)],[5.6,.86,S*(az(5.6)+.5)],[5.15,1.0,S*2.05]],.14));
     // B: unión en el brazo del A-frame
     var b=grp();b.add(HQ.rblock(T,1.0,.75,.9,.12,CG));var pl=HQ.rblock(T,1.3,.12,1.1,.04,CG);pl.position.y=-.42;b.add(pl);b.position.set(4.6,1.1,S*2.1);
-    b.add(rot('B',[0,1.2,0],.75));P(S>0?'B1':'B2',[0,2.4,S*.6],b);
+    P(S>0?'B1':'B2',[0,2.4,S*.6],b);
     // manguera 58 (8W-0973) de la unión B a la entrada A del eje, con bridas 1P-4584 en los dos extremos
     P('H58',[0,2.8,S*.6],hose2([[4.1,1.1,S*2.1],[3.5,1.12,S*2.1],[2.9,1.45,S*2.25],[2.3,1.2,S*2.2],[1.95,1.0,S*2.1]],.2)).userData.nb=!sh;
     brida([4.1,1.1,S*2.1],[-1,0,0],sh);brida([1.95,1.0,S*2.1],[1,0,0],false);
     
     // A: entrada en la caja del eje
-    var a=grp();a.add(HQ.rblock(T,.75,.75,.9,.1,PY));a.position.set(1.55,1.0,S*2.1);a.add(rot('A',[0,1.1,0],.75));P(S>0?'A1':'A2',[0,2.2,S*.6],a);
+    var a=grp();a.add(HQ.rblock(T,.75,.75,.9,.1,PY));a.position.set(1.55,1.0,S*2.1);P(S>0?'A1':'A2',[0,2.2,S*.6],a);
     // tubo 53 (8W-8380, derecha) / 60 (115-9206, izquierda): de B a la puerta K (arriba-adelante) del freno
     var pK=PT.K,pL=PT.L,pM=PT.M,pN=PT.N;
     brida([4.6,1.1,S*2.55],[0,0,S],false);
