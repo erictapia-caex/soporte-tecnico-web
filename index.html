@@ -8897,6 +8897,33 @@ window.addEventListener('popstate',function(){z.style.display='none'});
 })();
 
 </script>
+<!-- AVISO DE VERSION NUEVA (27-11-2026, igual que la app de mantenimiento) -->
+<div id="avisoVersionNueva" style="display:none;position:fixed;left:0;right:0;top:0;z-index:99999;background:#f5c400;color:#111;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;padding:12px 10px;box-shadow:0 3px 10px rgba(0,0,0,.4);text-align:center;line-height:1.35">
+  🔄 Hay una versión nueva de la app<br>
+  <button type="button" onclick="location.reload()" style="margin-top:8px;background:#0a7d2c;color:#fff;border:0;border-radius:8px;padding:9px 26px;font-size:16px;font-weight:bold">Actualizar</button>
+</div>
+<script>
+(function(){
+  if(location.protocol.indexOf('http')!==0 || location.hostname.indexOf('github.io')<0) return;
+  var base=null, mostrado=false;
+  var cargada=Date.parse(document.lastModified)||0;
+  function mostrar(){ if(mostrado) return; mostrado=true; document.getElementById('avisoVersionNueva').style.display='block'; }
+  function revisar(){
+    if(mostrado || !navigator.onLine) return;
+    fetch(location.pathname+'?v='+Date.now(),{method:'HEAD',cache:'no-store'}).then(function(r){
+      if(!r.ok) return;
+      var et=r.headers.get('ETag')||'', lm=Date.parse(r.headers.get('Last-Modified')||'')||0;
+      if(lm && cargada && lm>cargada+60000) return mostrar();
+      if(base===null){ base=et; return; }
+      if(et && base && et!==base) mostrar();
+    }).catch(function(){});
+  }
+  setTimeout(revisar,4000);
+  setInterval(revisar,2*60*1000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') revisar(); });
+  window.addEventListener('online',revisar);
+})();
+</script>
 <script>/*sw-registro*/(function(){if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('sw.js').then(function(r){r.update();setInterval(function(){r.update();},30*60*1000);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')r.update().catch(function(){});});window.addEventListener('focus',function(){r.update().catch(function(){});});
 r.addEventListener('updatefound',function(){var n=r.installing;n&&n.addEventListener('statechange',function(){if(n.state==='installed'&&navigator.serviceWorker.controller){n.postMessage('skip');}});});}).catch(function(){});
