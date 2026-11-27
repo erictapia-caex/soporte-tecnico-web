@@ -5018,7 +5018,7 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
     var pJ=[7.6,.83,S*(az(7.6)+.55)];
     P(S>0?'H59':'H96',[0,2.2,S*.8],HQ.hose(T,[pJ,[8.3,.83,pJ[2]],[9.6,1.4,S*2.3],[10.6,2.2,S*2.7],[11.7,2.3,S*2.75]],.2,RB,ZN));
     brida(pJ,[1,0,0],sh);
-    var lb=rot('VIENE DEL ENFRIADOR',[12.3,1.5,S*2.75],3.4,'#9fe0ff');P('TX',[0,0,0],rot(S>0?'MANGUERA 59 · 8W-4033':'MANGUERA 96 · 8W-4032',[9.4,2.4,S*2.1],3.4,'#ffd23f')).userData.nb=true;P('TX',[0,0,0],lb).userData.nb=true;
+    var lb=rot('VIENE DEL ENFRIADOR',[12.3,1.5,S*2.75],3.4,'#9fe0ff');P('TX',[0,0,0],lb).userData.nb=true;
     // tubo 40 (8W-0999) sobre el brazo del A-frame hasta la unión B
     P(S>0?'T40A':'T40B',[0,2,S*.6],tubo([[7.55,.83,pJ[2]],[6.6,.82,S*(az(6.6)+.55)],[5.6,.86,S*(az(5.6)+.5)],[5.15,1.0,S*2.05]],.14));
     // B: unión en el brazo del A-frame
@@ -5027,18 +5027,18 @@ V3D.frtras=new Viewer(function(P,K){var T=K.T,ZN=HQ.zinc(T),RB=HQ.rubber(T),
     // manguera 58 (8W-0973) de la unión B a la entrada A del eje, con bridas 1P-4584 en los dos extremos
     P('H58',[0,2.8,S*.6],hose2([[4.1,1.1,S*2.1],[3.5,1.12,S*2.1],[2.9,1.45,S*2.25],[2.3,1.2,S*2.2],[1.95,1.0,S*2.1]],.2)).userData.nb=!sh;
     brida([4.1,1.1,S*2.1],[-1,0,0],sh);brida([1.95,1.0,S*2.1],[1,0,0],false);
-    var l58=rot('MANGUERA 58 · 8W-0973',[3.0,2.25,S*2.2],3.4,'#ffd23f');P('TX',[0,0,0],l58).userData.nb=true;
+    
     // A: entrada en la caja del eje
     var a=grp();a.add(HQ.rblock(T,.75,.75,.9,.1,PY));a.position.set(1.55,1.0,S*2.1);a.add(rot('A',[0,1.1,0],.75));P(S>0?'A1':'A2',[0,2.2,S*.6],a);
     // tubo 53 (8W-8380, derecha) / 60 (115-9206, izquierda): de B a la puerta K (arriba-adelante) del freno
     var pK=PT.K,pL=PT.L,pM=PT.M,pN=PT.N;
     brida([4.6,1.1,S*2.55],[0,0,S],false);
     P(S>0?'T53':'T60',[0,2.6,S*1.4],tubo([[4.6,1.1,S*2.55],[4.6,1.15,S*2.85],[4.0,1.5,S*2.95],[2.8,1.75,S*2.95],[1.9,1.8,S*3.1],[1.55,1.75,S*3.9],[1.4,1.55,S*4.7],[pK[0],pK[1],S*5.1],[pK[0],pK[1],S*5.25]],.14));
-    abraz([4.25,1.32,S*2.92],[0,1,0],sh);P('TX',[0,0,0],rot(S>0?'TUBO 53 · 8W-8380':'TUBO 60 · 115-9206',[3.2,3.1,S*4.4],3.0,'#ffffff')).userData.nb=true;abraz([1.7,1.95,S*3.3],[0,1,0],false);
+    abraz([4.25,1.32,S*2.92],[0,1,0],sh);abraz([1.7,1.95,S*3.3],[0,1,0],false);
     // tubo 54 (5T-7620, derecha) / 61 (5T-7617, izquierda): de A por delante de la caja hasta la puerta L y sigue por atrás a N
     brida([1.55,1.0,S*2.55],[0,0,S],false);
     P(S>0?'T54':'T61',[0,2.2,S*1.6],tubo([[1.55,1.0,S*2.55],[1.6,1.0,S*3.0],[1.55,.75,S*4.1],[1.5,-.2,S*4.8],[pL[0],pL[1],S*5.1],[pL[0],pL[1],S*5.25]],.14));
-    abraz([1.62,1.15,S*3.1],[0,1,0],false);P('TX',[0,0,0],rot(S>0?'TUBO 54 · 5T-7620':'TUBO 61 · 5T-7617',[2.6,-1.4,S*4.3],3.0,'#ffffff')).userData.nb=true;
+    abraz([1.62,1.15,S*3.1],[0,1,0],false);
     // en las puertas: adaptador K y L, tubo 57 (5T-7618) de K a M; codo 93 + acople rápido 62 + tapa 63 en M y N
     [['K',pK],['L',pL],['M',pM],['N',pN]].forEach(function(e,i){var g=grp(),fb=HQ.rblock(T,.5,.5,.32,.05,ZN);fb.rotation.x=Math.PI/2;g.add(fb);g.position.set(e[1][0],e[1][1],S*5.12);P(55,[0,1.5,S*1.2],g).userData.nb=!(sh&&i===0);
       [-1,1].forEach(function(s2,j){var bo=HQ.hexBolt(T,.6,.05,ZN);bo.rotation.x=S>0?-Math.PI/2:Math.PI/2;bo.position.set(e[1][0]+s2*.16,e[1][1]-s2*.16,S*5.25);P(56,[0,1.5,S*2],bo).userData.nb=!(sh&&i===0&&j===0);});});
